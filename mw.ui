@@ -6,193 +6,268 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>435</width>
-    <height>687</height>
+    <width>881</width>
+    <height>673</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>SimpleMotion V2 Commander</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QGroupBox" name="groupBox">
-      <property name="title">
-       <string>Connection</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>SimpleMotion V2 adapter port name (such as COM5)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="busName">
-         <property name="maxLength">
-          <number>32</number>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Target drive address</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QSpinBox" name="deviceAddress">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>255</number>
-         </property>
-         <property name="value">
-          <number>1</number>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QPushButton" name="connect">
-         <property name="text">
-          <string>Connect</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QPushButton" name="disconnect">
-         <property name="text">
-          <string>Disconnect</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="groupBox_2">
-      <property name="title">
-       <string>Commands</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+     <widget class="QWidget" name="widget" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="margin">
+        <number>0</number>
+       </property>
        <item>
-        <widget class="QPushButton" name="enableDrive">
-         <property name="text">
-          <string>Enable drive</string>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Connection</string>
          </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>SimpleMotion V2 adapter port name (such as COM5)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="busName">
+            <property name="maxLength">
+             <number>32</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Target drive address</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="deviceAddress">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>255</number>
+            </property>
+            <property name="value">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="connect">
+            <property name="text">
+             <string>Connect</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="disconnect">
+            <property name="text">
+             <string>Disconnect</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="disableDrive">
-         <property name="text">
-          <string>Disable drive</string>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Commands</string>
          </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QPushButton" name="enableDrive">
+            <property name="text">
+             <string>Enable drive</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="disableDrive">
+            <property name="text">
+             <string>Disable drive</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="movehome">
+            <property name="text">
+             <string>Move home</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="clearfaults">
+            <property name="text">
+             <string>Clear faults</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="readStatus">
+            <property name="text">
+             <string>Read drive status &amp;&amp; positions</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="movehome">
-         <property name="text">
-          <string>Move home</string>
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="title">
+          <string>Parameters</string>
          </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>[CVL] Velocity limit</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="CVL">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>32767</number>
+            </property>
+            <property name="singleStep">
+             <number>50</number>
+            </property>
+            <property name="value">
+             <number>50</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="setParams">
+            <property name="text">
+             <string>Set</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="clearfaults">
-         <property name="text">
-          <string>Clear faults</string>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Set point control</string>
          </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Set point</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="setPoint">
+            <property name="minimum">
+             <number>-9999999</number>
+            </property>
+            <property name="maximum">
+             <number>9999999</number>
+            </property>
+            <property name="singleStep">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="setSetpoint">
+            <property name="text">
+             <string>Set</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="readStatus">
-         <property name="text">
-          <string>Read drive status &amp; positions</string>
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="title">
+          <string>Read / write arbitrary parameter</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="test">
-         <property name="text">
-          <string>test</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="groupBox_4">
-      <property name="title">
-       <string>Parameters</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>[CVL] Velocity limit</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QSpinBox" name="CVL">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>32767</number>
-         </property>
-         <property name="singleStep">
-          <number>50</number>
-         </property>
-         <property name="value">
-          <number>50</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QPushButton" name="setParams">
-         <property name="text">
-          <string>Set</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="groupBox_3">
-      <property name="title">
-       <string>Set point control</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Set point</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QSpinBox" name="setPoint">
-         <property name="minimum">
-          <number>-9999999</number>
-         </property>
-         <property name="maximum">
-          <number>9999999</number>
-         </property>
-         <property name="singleStep">
-          <number>100</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QPushButton" name="setSetpoint">
-         <property name="text">
-          <string>Set</string>
-         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="arbitraryParameterNumber">
+            <property name="maximum">
+             <number>16384</number>
+            </property>
+            <property name="value">
+             <number>6002</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="writeArbitraryParameter">
+            <property name="text">
+             <string>Write</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Parameter value</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="arbitraryParameterValue">
+            <property name="minimum">
+             <number>-999999999</number>
+            </property>
+            <property name="maximum">
+             <number>999999999</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="readArbitraryParameter">
+            <property name="text">
+             <string>Read</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Parameter address</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -217,7 +292,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>435</width>
+     <width>881</width>
      <height>21</height>
     </rect>
    </property>
@@ -234,10 +309,15 @@
   <tabstop>disableDrive</tabstop>
   <tabstop>movehome</tabstop>
   <tabstop>clearfaults</tabstop>
+  <tabstop>readStatus</tabstop>
   <tabstop>CVL</tabstop>
   <tabstop>setParams</tabstop>
   <tabstop>setPoint</tabstop>
   <tabstop>setSetpoint</tabstop>
+  <tabstop>arbitraryParameterNumber</tabstop>
+  <tabstop>readArbitraryParameter</tabstop>
+  <tabstop>arbitraryParameterValue</tabstop>
+  <tabstop>writeArbitraryParameter</tabstop>
   <tabstop>log</tabstop>
  </tabstops>
  <resources/>

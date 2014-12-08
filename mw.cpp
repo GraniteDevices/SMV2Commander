@@ -196,21 +196,48 @@ void MW::on_readStatus_clicked()
 
 }
 
+/*
+  //an raw example to run homing in torque mode
+  //drive must be fully configured in torque and position modes, homing must be configured and drive enabled to run this
 void MW::on_test_clicked()
 {
-     smSetParameter(busHandle, deviceAddress, SMP_CONTROL_MODE, CM_POSITION);
-//     smSetParameter(busHandle,deviceAddress,SMP_CONTROL_BITS1,SMP_CB1_ENABLE);
+     smSetParameter(busHandle, deviceAddress, SMP_CONTROL_MODE, CM_POSITION);//set drive in position mode
 
-     smSetParameter(busHandle,deviceAddress,SMP_HOMING_CONTROL, 1);
+     smSetParameter(busHandle,deviceAddress,SMP_HOMING_CONTROL, 1);//start homing
 
      smint32 status, center;
      smRead1Parameter(busHandle, deviceAddress, SMP_STATUS, &status);
 
      while (bool(status & STAT_HOMING)) {
-     smRead1Parameter(busHandle, deviceAddress, SMP_STATUS, &status);
+        smRead1Parameter(busHandle, deviceAddress, SMP_STATUS, &status);//loop here until homing is done. TODO add timeout and status reporting or better, do this in separate thread
      }
-     smRead1Parameter(busHandle, deviceAddress, SMP_ACTUAL_POSITION_FB, &center);
+     smRead1Parameter(busHandle, deviceAddress, SMP_ACTUAL_POSITION_FB, &center);//read position where we ended up
 
-     smSetParameter(busHandle, deviceAddress, SMP_CONTROL_MODE, CM_TORQUE);
-//     smSetParameter(busHandle,deviceAddress,SMP_CONTROL_BITS1,SMP_CB1_ENABLE);
+     smSetParameter(busHandle, deviceAddress, SMP_CONTROL_MODE, CM_TORQUE);//set to torque mode
+}
+*/
+
+void MW::on_readArbitraryParameter_clicked()
+{
+    logMessage(Info,QString("Reading parameter from address %1").arg(ui->arbitraryParameterNumber->value()));
+    smint32 value;
+    smRead1Parameter(busHandle,deviceAddress,ui->arbitraryParameterNumber->value(),&value);
+
+    if(checkAndReportSMBusErrors()==false)
+    {
+        logMessage(Info,QString("Parameter read, value is %1").arg(value));
+        ui->arbitraryParameterValue->setValue(value);//set it to gui also
+    }
+    else
+        logMessage(Info,QString("Check that parameter address is defined in simplemotion_defs.h"));
+}
+
+void MW::on_writeArbitraryParameter_clicked()
+{
+    logMessage(Info,QString("Setting value %2 to parameter address %1").arg(ui->arbitraryParameterNumber->value()).arg(ui->arbitraryParameterValue->value()));
+    smSetParameter(busHandle,deviceAddress,ui->arbitraryParameterNumber->value(),ui->arbitraryParameterValue->value());
+    if(checkAndReportSMBusErrors()==true)
+    {
+        logMessage(Info,QString("Check that parameter address is defined in simplemotion_defs.h and value is within valid min-max range."));
+    }
 }

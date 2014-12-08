@@ -40,7 +40,9 @@ private slots:
 
     void on_readStatus_clicked();
 
-    void on_test_clicked();
+    void on_readArbitraryParameter_clicked();
+
+    void on_writeArbitraryParameter_clicked();
 
 private:
     Ui::MW *ui;

@@ -22,7 +22,9 @@ void MW::logMessage(MW::MsgSeverity severity, QString msg)
     ui->log->appendHtml(msg);
 }
 
-bool MW::checkAndReportSMBusErrors()
+//if fast=true then do only checks that do not need communication via SM bus (local checks only,
+//such as errors in received packets, but not reporting errors in invalid parameter values)*/
+bool MW::checkAndReportSMBusErrors(bool fast)
 {
     QString errs;
 
@@ -46,13 +48,24 @@ bool MW::checkAndReportSMBusErrors()
 
     //read SMP_CUMULATIVE_STATUS
     smint32 SMDeviceSideCommStatus;
-    smRead1Parameter(busHandle,deviceAddress,SMP_CUMULATIVE_STATUS,&SMDeviceSideCommStatus);
+    if(fast==false)
+    {
+        smRead1Parameter(busHandle,deviceAddress,SMP_CUMULATIVE_STATUS,&SMDeviceSideCommStatus);
+        //if we have some error bits on, reset them, so we can spot new errors later
+        if(SMDeviceSideCommStatus!=0)
+        {
+            smSetParameter(busHandle,deviceAddress,SMP_CUMULATIVE_STATUS,0);
+        }
+    }
+    else
+    {
+        SMDeviceSideCommStatus=0;//a cludge to avoid false errors being reported in stringifySMBusErrors
+    }
 
     //read cumulative bus status errors and all convert (1) and (2) bits to human readable form:
     errs=stringifySMBusErrors(getCumulativeStatus(busHandle), SMDeviceSideCommStatus);
 
-    //reset errors bits
-    smSetParameter(busHandle,deviceAddress,SMP_CUMULATIVE_STATUS,0);
+    //reset local errors bits
     resetCumulativeStatus(busHandle);
 
     //if there were errors, log them
@@ -240,4 +253,84 @@ void MW::on_writeArbitraryParameter_clicked()
     {
         logMessage(Info,QString("Check that parameter address is defined in simplemotion_defs.h and value is within valid min-max range."));
     }
+}
+
+
+/* This method shows how to perform mutliple read/write tasks with single SM transmission.
+ *
+ * For optimization tips, see: http://granitedevices.com/wiki/Optimizing_SimpleMotion_V2_performance
+ * And: http://granitedevices.com/wiki/SMV2USB_adapter_latency_settings
+ */
+void MW::on_speedOptimizedWriteRead_clicked()
+{
+    //initialize some variables that do not need to be updated on every cycle.
+    //TODO: implement it so that it gets called only on the first execution and not always (uncomment the lines etc)!
+    //if(fastWriteReadInitialised==false)
+    //{
+        setupSpeedOptimizedWriteRead();
+    //    fastWriteReadInitialised=true;
+    //}
+
+
+    /* Variables:
+    -paramValue1 is the parameter value written to parameter number defined in paramAddr1
+    -readOutParamAddr1-3 will define the parameter numbers to read out into readout1-3
+    */
+
+    //VALUES DEFINED
+    int paramAddr1=SMP_ABSOLUTE_SETPOINT;
+    int paramValue1=ui->setPoint->value();
+    int readOutParamAddr1=SMP_ACTUAL_TORQUE;
+    int readOutParamAddr2=SMP_ACTUAL_POSITION_FB;
+    int readOutParamAddr3=SMP_ACTUAL_VELOCITY_FB;
+    smint32 nul, readout1, readout2, readout3;
+
+    //WRITING PARAMETERS
+    //set an parameter number where next values are written. This line consumes 2 bytes of outbound payload
+    smAppendSMCommandToQueue( busHandle, SMPCMD_SETPARAMADDR, paramAddr1 );
+
+    //write the parameter value to previously set parameter address. SMPCMD_24B consumes 3 bytes of outbound payload
+    smAppendSMCommandToQueue( busHandle, SMPCMD_24B, paramValue1);
+
+    //READING PARAMETERS
+    //set parameter parameter number which will be returned from each command executed after this
+    smAppendSMCommandToQueue( busHandle, SMPCMD_SETPARAMADDR, SMP_RETURN_PARAM_ADDR ); //consumes 2 bytes
+    /*write new values to parameter SMP_RETURN_PARAM_ADDR. after execution these commands return the parameter values
+    defined by readOutParamAddrN*/
+    smAppendSMCommandToQueue( busHandle, SMPCMD_24B, readOutParamAddr1 ); //consumes 3 bytes
+    smAppendSMCommandToQueue( busHandle, SMPCMD_24B, readOutParamAddr2 ); //consumes 3 bytes
+    smAppendSMCommandToQueue( busHandle, SMPCMD_24B, readOutParamAddr3 ); //consumes 3 bytes
+
+    //execute commands over SM bus
+    smExecuteCommandQueue( busHandle, deviceAddress );
+
+    /*read value commands (one per each append command). Size of inbound payload depends on
+    what was set to SMP_RETURN_PARAM_LEN at initialization */
+    smGetQueuedSMCommandReturnValue( busHandle,&nul );
+    smGetQueuedSMCommandReturnValue( busHandle,&nul );
+
+    smGetQueuedSMCommandReturnValue( busHandle,&nul );
+
+    /*the next readouts reflect to the last three commands appended before smExecuteCommandQueue
+    and here we get the readout values*/
+
+    smGetQueuedSMCommandReturnValue( busHandle,&readout1 );
+    smGetQueuedSMCommandReturnValue( busHandle,&readout2 );
+    smGetQueuedSMCommandReturnValue( busHandle,&readout3 );
+
+    //argument fast=true will check only local SM bus errors (received packet validity). Will not report if drive ignores some written value.
+    //During debugging, set argument fast=false to have full error checking active.
+    checkAndReportSMBusErrors(true);
+
+    //print results
+    logMessage(Info,QString("Setpoint set to %1 and same time readouts were: ACTUAL_TORQUE=%2, ACTUAL_POSITION_FB=%3, ACTUAL_VELOCITY_FB=%4").arg(paramValue1).arg(readout1).arg(readout2).arg(readout3));
+}
+
+/* this initialization function needs to be called only once before on_speedOptimizedWriteRead_clicked() will work properly
+ * assuming that these values are not modified by other functions */
+void MW::setupSpeedOptimizedWriteRead()
+{
+    /*setting return data lenght to 24 bits (22 bits maximum returned integer value
+    as 2 bits are used by SM protocol). 16 bit data will fit in return value without clipping. */
+    smSetParameter( busHandle, deviceAddress, SMP_RETURN_PARAM_LEN, SMPRET_24B);
 }

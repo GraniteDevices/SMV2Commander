@@ -44,11 +44,17 @@ private slots:
 
     void on_writeArbitraryParameter_clicked();
 
+    void on_speedOptimizedWriteRead_clicked();
+
 private:
     Ui::MW *ui;
 
+
+    void setupSpeedOptimizedWriteRead();
     void logMessage(MsgSeverity severity, QString msg);
-    bool checkAndReportSMBusErrors();
+    //if fast=true then do only checks that do not need communication via SM bus (local checks only,
+    //such as errors in received packets, but not reporting errors in invalid parameter values)*/
+    bool checkAndReportSMBusErrors(bool fast=false);
     QString stringifySMBusErrors(SM_STATUS smStat, smint32 smDeviceErrors);
 
     smint32 deviceAddress;

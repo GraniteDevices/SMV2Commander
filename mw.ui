@@ -122,6 +122,13 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QPushButton" name="speedOptimizedWriteRead">
+            <property name="text">
+             <string>Speed optimized write &amp;&amp; read (set setpoint and read various values)</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>

@@ -172,7 +172,7 @@ void MW::on_setParams_clicked()
 void MW::on_setSetpoint_clicked()
 {
     logMessage(Info,QString("Setpoint to %1").arg(ui->setPoint->value()));
-    smSetParameter(busHandle,deviceAddress,SMP_ABSOLUTE_POS_TARGET,ui->setPoint->value());
+    smSetParameter(busHandle,deviceAddress,SMP_ABSOLUTE_SETPOINT,ui->setPoint->value());
     checkAndReportSMBusErrors();
 }
 

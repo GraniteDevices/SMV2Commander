@@ -50,6 +50,11 @@ private:
     Ui::MW *ui;
 
 
+    //generates one line string to tell digital input state. bits=register read from device, bitNumber=bit that identifies status of the input.
+    QString formatDigitalStateAsString(QString inputName, smint32 bits, int bitNumber);
+    //generate message telling state of all digital inputs. digitalInsRegister=register read from device.
+    QString getDigitalInsString( smint32 digitalInsRegister );
+
     void setupSpeedOptimizedWriteRead();
     void logMessage(MsgSeverity severity, QString msg);
     //if fast=true then do only checks that do not need communication via SM bus (local checks only,

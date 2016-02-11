@@ -181,10 +181,10 @@ void MW::on_setSetpoint_clicked()
 void MW::on_readStatus_clicked()
 {
     logMessage(Info,"Reading status");
-    smint32 currentSetpoint,currentPosFeedback, statusBits, faultBits;
+    smint32 currentSetpoint,currentPosFeedback, statusBits, faultBits, digitalInputs, analogIn1;
     //with this function we can read 3 parameters at once (faster than calling three one parameter read commands)
     smRead3Parameters(busHandle,deviceAddress,SMP_ABSOLUTE_POS_TARGET,&currentSetpoint,SMP_ACTUAL_POSITION_FB,&currentPosFeedback, SMP_STATUS, &statusBits);
-    smRead1Parameter(busHandle,deviceAddress,SMP_FAULTS,&faultBits);
+    smRead3Parameters(busHandle,deviceAddress,SMP_FAULTS,&faultBits, SMP_DIGITAL_IN_VALUES_1, &digitalInputs, SMP_ANALOG_IN_VALUE_1, &analogIn1);
 
     if(checkAndReportSMBusErrors()==false)//if no errors
     {
@@ -205,8 +205,51 @@ void MW::on_readStatus_clicked()
                                 "*over velocity=%2<br> "
                                 "*over current=%3<br> "
                                 "*under voltage=%4<br>").arg(bool(faultBits&FLT_FOLLOWERROR)).arg(bool(faultBits&FLT_OVERVELOCITY)).arg(bool(faultBits&FLT_OVERCURRENT)).arg(bool(faultBits&FLT_UNDERVOLTAGE)));
-    }
 
+        //print digital inputs
+        logMessage(Info,QString("State if physical inputs:<br>"));
+        logMessage(Info,getDigitalInsString(digitalInputs));
+        logMessage(Info,QString("*Analog input 1 voltage: %1V<br>").arg(double(analogIn1)*10.0/16384.0));
+    }
+}
+
+//generates one line string to tell digital input state. bits=register read from device, bitNumber=bit that identifies status of the input.
+QString MW::formatDigitalStateAsString(QString inputName, smint32 bits, int bitNumber)
+{
+    //test if given bit number is 1
+    if( bits & (1<<bitNumber) )//is 1
+    {
+        return "*"+inputName+" = High<br>";
+    }
+    else//is 0
+    {
+        return "*"+inputName+" = Low<br>";
+    }
+}
+
+//generate message telling state of all digital inputs. digitalInsRegister=register read from device.
+QString MW::getDigitalInsString( smint32 digitalInsRegister )
+{
+    QString ret;
+    ret+=formatDigitalStateAsString("GPI 1",digitalInsRegister,0);
+    ret+=formatDigitalStateAsString("GPI 2",digitalInsRegister,1);
+    ret+=formatDigitalStateAsString("GPI 3",digitalInsRegister,2);
+    ret+=formatDigitalStateAsString("GPI 4",digitalInsRegister,3);
+    ret+=formatDigitalStateAsString("GPI 5",digitalInsRegister,4);
+    ret+=formatDigitalStateAsString("GPI 6",digitalInsRegister,20);
+    ret+=formatDigitalStateAsString("HSIN 1",digitalInsRegister,5);
+    ret+=formatDigitalStateAsString("HSIN 2",digitalInsRegister,6);
+    ret+=formatDigitalStateAsString("ANA1 as digital",digitalInsRegister,7);
+    ret+=formatDigitalStateAsString("ANA2 as digital",digitalInsRegister,8);
+    ret+=formatDigitalStateAsString("ENC A",digitalInsRegister,9);
+    ret+=formatDigitalStateAsString("ENC B",digitalInsRegister,10);
+    ret+=formatDigitalStateAsString("ENC C",digitalInsRegister,11);
+    ret+=formatDigitalStateAsString("ENC D",digitalInsRegister,12);
+    ret+=formatDigitalStateAsString("Hall U",digitalInsRegister,13);
+    ret+=formatDigitalStateAsString("Hall V",digitalInsRegister,14);
+    ret+=formatDigitalStateAsString("Hall W",digitalInsRegister,15);
+
+    return ret;
 }
 
 /*
